@@ -56,7 +56,7 @@ or via a mixin
 There is also a debug option available.  This will generate some additional output to console.log.
 
 ```
-<a-entity key-bindings="debug: true bindings: {key1}={event1},{key2}={event2}" </a-entity>
+<a-entity key-bindings="debug: true; bindings: {key1}={event1},{key2}={event2}" </a-entity>
 ```
 
 
