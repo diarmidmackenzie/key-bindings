@@ -58,6 +58,11 @@ AFRAME.registerComponent('key-bindings', {
 
   update: function() {
 
+    /* Delete old bindings, so that any not specified in the new list are
+     * removed */
+    this.boundKeys = [];
+    this.boundEvents = [];
+
     /* Parse bindings into two arrays, for easy access when keys are pressed. */
     this.data.bindings.forEach((item, index) => {
       config = item.split("=")
