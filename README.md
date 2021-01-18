@@ -53,6 +53,10 @@ or via a mixin
 
 {event1} values should be the names of the events to be triggered.  Again, these are case-sensitive.
 
+You can also set "bindings: none" to explicitly set no bindings (or clear previously configured bindings).
+
+
+
 There is also a debug option available.  This will generate some additional output to console.log.
 
 ```

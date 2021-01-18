@@ -41,14 +41,17 @@
       <a-camera wasd-controls-enabled="false"></a-camera>
 
       <!-- Some tests that request keyboard interactions.  Text changes when the event is detected -->
-      <a-text value="Press A" logger="event: OK" key-bindings="debug: true; bindings:KeyA=OK" position="-2 2.5 -3" color="black"></a-text>
-      <a-text value="Press B" logger="event: This" mixin="test2" position="-2 2 -3" color="black"></a-text>
-      <a-text value="Press C" logger="event: Is" mixin="test2" position="-2 1.5 -3" color="black"></a-text>
-      <a-text value="Press D" logger="event: Working" mixin="test2" position="-2 1 -3" color="black"></a-text>
-      <a-text value="Press Escape" logger="event: Even" mixin="test3" position="0.5 2.5 -3" color="black"></a-text>
-      <a-text value="Press Left Control" logger="event: Non-Letter" mixin="test3" position="0.5 2 -3" color="black"></a-text>
-      <a-text value="Press Space" logger="event: Keys Work!" mixin="test3" position="0.5 1.5 -3" color="black"></a-text>
-      <a-text value="Press any of: E, F, G" logger="event: Multiple keys one event!" mixin="test4" position="0.5 1 -3" color="black"></a-text>
+      <a-text id = 'Test1' value="Press A" logger="event: OK" key-bindings="debug: true; bindings:KeyA=OK" position="-2 2.5 -3" color="black"></a-text>
+      <a-text id = 'Test2' value="Press B" logger="event: This" mixin="test2" position="-2 2 -3" color="black"></a-text>
+      <a-text id = 'Test3' value="Press C" logger="event: Is" mixin="test2" position="-2 1.5 -3" color="black"></a-text>
+      <a-text id = 'Test4'value="Press D" logger="event: Working" mixin="test2" position="-2 1 -3" color="black"></a-text>
+      <a-text id = 'Test5' value="Press Escape" logger="event: Even" mixin="test3" position="0.5 2.5 -3" color="black"></a-text>
+      <a-text id = 'Test6' value="Press Left Control" logger="event: Non-Letter" mixin="test3" position="0.5 2 -3" color="black"></a-text>
+      <a-text id = 'Test7' value="Press Space" logger="event: Keys Work!" mixin="test3" position="0.5 1.5 -3" color="black"></a-text>
+      <a-text id = 'Test8' value="Press any of: E, F, G" logger="event: Multiple keys one event!" mixin="test4" position="0.5 1 -3" color="black"></a-text>
+
+      <!-- Static object, to cover case with no bindings -->
+      <a-text id = 'Test9' value="This one has no bindings" key-bindings="debug: true; bindings:none" position="0.5 0.5 -3" color="black"></a-text>
 
     </a-scene>
   </body>

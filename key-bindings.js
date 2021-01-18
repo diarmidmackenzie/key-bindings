@@ -62,24 +62,40 @@ AFRAME.registerComponent('key-bindings', {
      * removed */
     this.boundKeys = [];
     this.boundEvents = [];
+    var numBindings = 0;
+
+    if ((this.data.bindings.length > 0) &&
+        (this.data.bindings[0] == "none")) {
+      numBindings = 0;
+    }
+    else {
+      numBindings = this.data.bindings.length;
+    }
+
+
+    if (this.data.debug) {
+      console.log(`Binding ${numBindings} key bindings for ${this.el.id}`)
+    }
 
     /* Parse bindings into two arrays, for easy access when keys are pressed. */
-    this.data.bindings.forEach((item, index) => {
-      config = item.split("=")
+    if (numBindings > 0) {
 
-      if (config.length !== 2) {
-        console.log(`Bad key binding config: ${item}`)
-      }
+      this.data.bindings.forEach((item, index) => {
+        config = item.split("=")
 
-      /* String should be of the form "<key>:<event>" */
-      this.boundKeys.push(config[0]);
-      this.boundEvents.push(config[1]);
+        if (config.length !== 2) {
+          console.log(`Bad key binding config: ${item}`)
+        }
 
-      if (this.data.debug) {
-        console.log(`Bound key: ${config[0]} to event: ${config[1]}`);
-      }
-    });
+        /* String should be of the form "<key>:<event>" */
+        this.boundKeys.push(config[0]);
+        this.boundEvents.push(config[1]);
 
+        if (this.data.debug) {
+          console.log(`Bound key: ${config[0]} to event: ${config[1]}`);
+        }
+      });
+    }
   },
   /*******************************************************************
   * Events
