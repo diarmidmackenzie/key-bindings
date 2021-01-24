@@ -43,10 +43,12 @@ AFRAME.registerComponent('key-bindings', {
      * useful in future...
      */
     this.localKeys = {};
+    this.entityEvents = [];
     this.listeners = {
       keydown: this.onKeyDown.bind(this),
       keyup: this.onKeyUp.bind(this),
-      blur: this.onBlur.bind(this)
+      blur: this.onBlur.bind(this),
+      entityEvents: []
     };
     this.attachEventListeners();
 
@@ -81,22 +83,39 @@ AFRAME.registerComponent('key-bindings', {
     if (numBindings > 0) {
 
       this.data.bindings.forEach((item, index) => {
-        config = item.split("=")
+        var config = item.split("=")
 
         if (config.length !== 2) {
           console.log(`Bad key binding config: ${item}`)
         }
 
         /* String should be of the form "<key>:<event>" */
+        /* String should be of the form or "<entity>.<key>:<event>"
+          where entity will be an element ID beginning with a # */
+        if (config[0].includes(".")) {
+          var control = item.split(".")
+
+          //bind a function to receive this event, and store it in our list
+          // of such functions.
+          var callback = this.onEntityEvent.bind(this, config[0]);
+          this.listeners.entityEvents.push(callback);
+
+          // Listen for this event on this entity.
+          var entity = document.querySelector(control[0]);
+          entity.addEventListener(control[1], callback, false);
+          this.entityEvents.push(config[0]);
+        }
+
         this.boundKeys.push(config[0]);
         this.boundEvents.push(config[1]);
 
         if (this.data.debug) {
-          console.log(`Bound key: ${config[0]} to event: ${config[1]}`);
+          console.log(`Bound: ${config[0]} to event: ${config[1]}`);
         }
       });
     }
   },
+
   /*******************************************************************
   * Events
   *
@@ -122,18 +141,39 @@ AFRAME.registerComponent('key-bindings', {
     window.addEventListener('keydown', this.listeners.keydown, false);
     window.addEventListener('keyup', this.listeners.keyup, false);
     window.addEventListener('blur', this.listeners.blur, false);
+    this.entityEvents.forEach((item, index) => this.addEntityEventListener(item, index));
   },
 
   removeEventListeners: function () {
     window.removeEventListener('keydown', this.listeners.keydown);
     window.removeEventListener('keyup', this.listeners.keyup);
     window.removeEventListener('blur', this.listeners.blur);
+    this.entityEvents.forEach((item, index) => this.removeEntityEventListener(item, index));
+  },
+
+  addEntityEventListener: function(key, index) {
+
+    var control = key.split(".")
+
+    // start listening to this events on this entity
+    var entity = document.querySelector(control[0]);
+    entity.addEventListener(control[1], this.listeners.entityEvents[index], false);
+
+  },
+
+  removeEntityEventListener: function(key, index) {
+
+    var control = key.split(".")
+
+    // start listening to this events on this entity
+    var entity = document.querySelector(control[0]).
+    entity.removeEventListener(control[1], this.listeners.entityEvents[index]);
   },
 
   onKeyDown: function (event) {
     if (AFRAME.utils.shouldCaptureKeyEvent(event)) {
       this.localKeys[event.code] = true;
-      this.emit(event);
+      this.emit(event.code, event);
     }
   },
 
@@ -154,10 +194,15 @@ AFRAME.registerComponent('key-bindings', {
     }
   },
 
-  emit: function (event) {
+  onEntityEvent: function (event, data) {
+    var key = "#" + data.target.id + "." + data.type;
+    this.emit(key, event);
+  },
+
+  emit: function (keyString, event) {
 
     /* Emit an event based on KeyDown (if the key has a binding) */
-    var keyIndex = this.boundKeys.indexOf(event.code);
+    var keyIndex = this.boundKeys.indexOf(keyString);
 
     if (keyIndex !== -1) {
       if (this.data.debug) {
@@ -165,7 +210,7 @@ AFRAME.registerComponent('key-bindings', {
       }
       /* Construct and emit event.
        * The name is as per the config.
-       * We also embed the full Javascript KeyboardEvent object as
+       * We also embed the full event as received, as
        * event detail/data
        * (this may be useful in some cases). */
       this.el.emit(this.boundEvents[keyIndex],

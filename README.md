@@ -5,11 +5,15 @@ A-Frame component providing per-object Keyboard to Event Bindings.
 
 ### Overview
 
-This is a simple A-Frame component that allows keyboard controls to be used to trigger events on any component in an A-Frame scene. 
+This is a simple A-Frame component that allows events to be triggered on an entity in an A-Frame scene. on the basis of:
+
+- A keypress
+- An event on another entity, identified by ID.
 
 Example use cases:
 
 - Keyboard controls for an on-screen non-camera element
+- Event-based controls (not positional controls) from VR controllers.
 - Debugging / testing.  Easy to fire a named event on-demand (only works for simple events that don't require accompanying event data).
 
 This is not intended for use for keyboard controls of camera elements.  For that use the built-in A-Frame WASD controls, or keyboard-controls in A-Frame Extras.
@@ -45,11 +49,21 @@ or via a mixin
 <a-entity mixin="mymixin" </a-entity>
 ```
 
-{key1} values should be the names of keys as defined here: https://w3c.github.io/uievents-code/#keyboard-key-codes.  These are case-sensitive.
+
+
+{key1} values can be in one of two forms:
+
+Keyboard events: they should be the names of keys as defined here: https://w3c.github.io/uievents-code/#keyboard-key-codes.  These are case-sensitive.
 
 - Numbers are Digit1, Digit2 etc.
 - Letters are KeyA, Key B etc.
 - Other common keys include: Space, Escape, Enter, Control Left, ShiftLeft, Tab.
+
+For events on other objects: they should be of the form {Entity ID}.{event} where Entity ID is the identifier for the entity that will generate the event (typically begins with a #), and event is the name of the event that will be monitored on that Entity.
+
+- For example, you can monitor the A button on a the Right Hand controller by using a key value of "#rhand.abuttondown", where #rhand is the ID of an entity that also has the hand-controls component configured on it.
+
+  
 
 {event1} values should be the names of the events to be triggered.  Again, these are case-sensitive.
 
