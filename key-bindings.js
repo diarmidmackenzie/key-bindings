@@ -153,7 +153,7 @@ AFRAME.registerComponent('key-bindings', {
 
   addEntityEventListener: function(key, index) {
 
-    var control = key.split(".")
+    var control = key.split(".");
 
     // start listening to this events on this entity
     var entity = document.querySelector(control[0]);
@@ -163,10 +163,10 @@ AFRAME.registerComponent('key-bindings', {
 
   removeEntityEventListener: function(key, index) {
 
-    var control = key.split(".")
+    var control = key.split(".");
 
     // start listening to this events on this entity
-    var entity = document.querySelector(control[0]).
+    var entity = document.querySelector(control[0]);
     entity.removeEventListener(control[1], this.listeners.entityEvents[index]);
   },
 
