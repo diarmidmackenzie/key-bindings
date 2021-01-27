@@ -165,7 +165,7 @@ AFRAME.registerComponent('key-bindings', {
 
     var control = key.split(".");
 
-    // start listening to this events on this entity
+    // stop listening to this events on this entity
     var entity = document.querySelector(control[0]);
     entity.removeEventListener(control[1], this.listeners.entityEvents[index]);
   },
