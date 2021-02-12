@@ -216,8 +216,12 @@ AFRAME.registerComponent('key-bindings', {
       /* States are indicated by an initial character of $ */
       if (boundTo[0] == '$') {
         // state - how we handle this depends on whether the key is up or down.
-        if (keyDown) {          
-          this.el.addState(boundTo.substring(1));
+        if (keyDown) {
+          // state transitions should only be triggered by an initial keyDown
+          // event, not a repeat.
+          if (!event.repeat) {            
+            this.el.addState(boundTo.substring(1));
+          }
         }
         else
         {
