@@ -5,7 +5,7 @@ A-Frame component providing per-object Keyboard to Event Bindings.
 
 ### Overview
 
-This is a simple A-Frame component that allows events to be triggered on an entity in an A-Frame scene. on the basis of:
+This is a simple A-Frame component that allows events to be triggered, or states to be set, on an entity in an A-Frame scene. on the basis of:
 
 - A keypress
 - An event on another entity, identified by ID.
@@ -28,7 +28,13 @@ Download key-bindings.js from this repo, and include like this:
 <script src="key-bindings.js"></script>
 ```
 
-Not currently available through CDN, NPM etc.
+or via CDN (taking care over version number)
+
+```
+<script src="https://cdn.jsdelivr.net/gh/diarmidmackenzie/key-bindings@v0.2-alpha/key-bindings.min.js"></script>
+```
+
+Not currently available through NPM etc.
 
 
 
@@ -71,6 +77,16 @@ You can also set "bindings: none" to explicitly set no bindings (or clear previo
 
 
 
+If you want to set a state, rather than emit an event, use an event string beginning with a $.  This will add the state when the key is pressed down, and remove it when the key press ends.  It also leads to the generation of stateadded and stateremoved events - more on states here.  https://aframe.io/docs/1.2.0/core/entity.html#addstate-statename.
+
+For non-keypress events, there is no equivalent of "keydown", so states set will never be cleared.  The interface could be extended to have another control character to indicate "clear this state" - e.g. %.  That's not been implemented yet, but would be easy enough to do if required...
+
+
+
+Note that when a key is held down, this will typically cause the keyDown event to fire multiple times, meaning that multiple events will be emitted.  The fact that a keypress is a repeat is encoded in the event object, so these could be filtered out in the downstream application if desired.  See: https://stackoverflow.com/questions/7686197/how-can-i-avoid-autorepeated-keydown-events-in-javascript
+
+
+
 There is also a debug option available.  This will generate some additional output to console.log.
 
 ```
@@ -83,12 +99,11 @@ There is also a debug option available.  This will generate some additional outp
 
 Particular limitations to note:
 
-- The component detects keypresses when the key is pressed down.  It does not generate any further events when the key is released, and it also doesn't generate any additional events if the key is held down for a long time.
 - The component includes some code to handle Proxy controls:
 
   - This should allow you to connect input devices from your desktop to your mobile phone with WebRTC, using ProxyControls.js.
   - This code was inherited from keyboard-controls.js.  However this function is untested, and I have no idea whether or not it will work.
-- No distribution by CDN, NPM etc.  I don't yet have a minified version of the code available.
+- No distribution by NPM yet.
 
   
 

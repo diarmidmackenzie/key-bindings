@@ -173,16 +173,14 @@ AFRAME.registerComponent('key-bindings', {
   onKeyDown: function (event) {
     if (AFRAME.utils.shouldCaptureKeyEvent(event)) {
       this.localKeys[event.code] = true;
-      this.emit(event.code, event);
+      this.eventHandler(event.code, event, true);
     }
   },
 
   onKeyUp: function (event) {
     if (AFRAME.utils.shouldCaptureKeyEvent(event)) {
       delete this.localKeys[event.code];
-      /* We don't emit any events on KeyUp; only on KeyDown.
-       * Code came from keyboard-controls.js and was kept as it may be
-       * useful in future, and the overhead is low. */
+      this.eventHandler(event.code, event, false);
     }
   },
 
@@ -196,29 +194,52 @@ AFRAME.registerComponent('key-bindings', {
 
   onEntityEvent: function (event, data) {
     var key = "#" + data.target.id + "." + data.type;
-    this.emit(key, event);
+    this.eventHandler(key, event, true);
   },
 
-  emit: function (keyString, event) {
+  /* Handle an event based on config.  This can mean:
+    Emitting an event (on KeyDown)
+    Setting a state (on KeyDown)
+    Clearing a state (on KeyUp) */
+  eventHandler: function (keyString, event, keyDown) {
 
     /* Emit an event based on KeyDown (if the key has a binding) */
     var keyIndex = this.boundKeys.indexOf(keyString);
 
     if (keyIndex !== -1) {
+
+      boundTo = this.boundEvents[keyIndex];
       if (this.data.debug) {
-        console.log(`Key press: ${event.code} bound to event: ${this.boundEvents[keyIndex]}`);
+        console.log(`Key press: ${event.code} bound to event or state: ${boundTo}`);
       }
-      /* Construct and emit event.
-       * The name is as per the config.
-       * We also embed the full event as received, as
-       * event detail/data
-       * (this may be useful in some cases). */
-      this.el.emit(this.boundEvents[keyIndex],
-                   event);
+
+      /* States are indicated by an initial character of $ */
+      if (boundTo[0] == '$') {
+        // state - how we handle this depends on whether the key is up or down.
+        if (keyDown) {
+          this.el.addState(boundTo.substring(1));
+        }
+        else
+        {
+          //Key Up
+          this.el.removeState(boundTo.substring(1));
+        }
+      }
+      else
+      {
+        // event
+        /* Construct and emit event.
+         * The name is as per the config.
+         * We also embed the full event as received, as
+         * event detail/data
+         * (this may be useful in some cases). */
+        this.el.emit(boundTo,
+                     event);
+      }
     }
     else {
       if (this.data.debug) {
-        console.log(`Key press: ${event.code} not bound to any event`);
+        console.log(`Key press: ${event.code} not bound to any event or state`);
       }
     }
   },

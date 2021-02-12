@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+    <script src="key-bindings.js"></script>
+    <script>
+    /* Very simple logger component that listens for an event and updates
+     * text when the event is detected */
+    AFRAME.registerComponent('logger', {
+      schema: {
+        event: {type: 'string', default: "event"},
+        state: {type: 'string', default: "state"}
+      },
+
+      init: function () {
+        // Store off the default text (to present when state is not set)
+        if (this.data.state) {
+          this.stateClearText = this.el.getAttribute('text').value;
+        }
+      },
+
+      update: function () {
+
+      var el = this.el;
+      var data = this.data;
+
+      if (this.data.event) {
+          // This will log the event name when the entity emits the specified event.
+            el.addEventListener(data.event, function () {
+            el.setAttribute('text', "value: " + data.event);
+            this.stateClearText = data.event;
+          });
+        }
+      },
+
+      tick: function() {
+        var el = this.el;
+        var data = this.data;
+
+        if (this.data.state) {
+          if (el.is(this.data.state)) {
+              // This will log the state name when the state is set.
+            el.setAttribute('text', "value: " + data.state);
+          }
+          else
+          {
+            el.setAttribute('text', "value: " + this.stateClearText);
+          }
+        }
+      }
+    });
+    </script>
+  </head>
+  <body>
+    <a-scene>
+      <!-- Same as examples.html, but with states instead of events.  -->
+      <a-mixin id="test2" key-bindings="debug: false; bindings:KeyB=$This,KeyC=$Is,KeyD=$Working"></a-mixin>
+      <a-mixin id="test3" key-bindings="debug: true; bindings:Escape=$Even,ControlLeft=$Non-Letter,Space=$Keys Work!"></a-mixin>
+      <a-mixin id="test4" key-bindings="debug: true; bindings:KeyE=$Multiple keys one state!,KeyF=$Multiple keys one state!,KeyG=$Multiple keys one state!"></a-mixin>
+
+      <!-- Disable WASD controls, as they result in the display moving when A & D are pressed! -->
+      <a-camera wasd-controls-enabled="false"></a-camera>
+
+      <!-- Some tests that request keyboard interactions.  Text changes when the state is detected -->
+      <a-text id = 'Test1' value="Testing for States..." position="-2 3 -3" color="black"></a-text>
+      <a-text id = 'Test1' value="Press A" logger="state: OK" key-bindings="debug: true; bindings:KeyA=$OK" position="-2 2.5 -3" color="black"></a-text>
+      <a-text id = 'Test2' value="Press B" logger="state: This" mixin="test2" position="-2 2 -3" color="black"></a-text>
+      <a-text id = 'Test3' value="Press C" logger="state: Is" mixin="test2" position="-2 1.5 -3" color="black"></a-text>
+      <a-text id = 'Test4'value="Press D" logger="state: Working" mixin="test2" position="-2 1 -3" color="black"></a-text>
+      <a-text id = 'Test5' value="Press Escape" logger="state: Even" mixin="test3" position="0.5 2.5 -3" color="black"></a-text>
+      <a-text id = 'Test6' value="Press Left Control" logger="state: Non-Letter" mixin="test3" position="0.5 2 -3" color="black"></a-text>
+      <a-text id = 'Test7' value="Press Space" logger="state: Keys Work!" mixin="test3" position="0.5 1.5 -3" color="black"></a-text>
+      <a-text id = 'Test8' value="Press any of: E, F, G" logger="state: Multiple keys one state!" mixin="test4" position="0.5 1 -3" color="black"></a-text>
+
+    </a-scene>
+  </body>
+</html>
