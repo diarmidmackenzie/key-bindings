@@ -194,7 +194,7 @@ AFRAME.registerComponent('key-bindings', {
 
   onEntityEvent: function (event, data) {
     var key = "#" + data.target.id + "." + data.type;
-    this.eventHandler(key, event, true);
+    this.eventHandler(key, data, true);
   },
 
   /* Handle an event based on config.  This can mean:
@@ -219,7 +219,7 @@ AFRAME.registerComponent('key-bindings', {
         if (keyDown) {
           // state transitions should only be triggered by an initial keyDown
           // event, not a repeat.
-          if (!event.repeat) {            
+          if (!event.repeat) {
             this.el.addState(boundTo.substring(1));
           }
         }
@@ -227,6 +227,21 @@ AFRAME.registerComponent('key-bindings', {
         {
           //Key Up
           this.el.removeState(boundTo.substring(1));
+        }
+      }
+      else if (boundTo[0] == '%') {
+        // inverse state - same as $ processing but with add/remove flipped.
+        if (keyDown) {
+          // state transitions should only be triggered by an initial keyDown
+          // event, not a repeat.
+          if (!event.repeat) {
+            this.el.removeState(boundTo.substring(1));
+          }
+        }
+        else
+        {
+          //Key Up
+          this.el.addState(boundTo.substring(1));
         }
       }
       else if (keyDown)

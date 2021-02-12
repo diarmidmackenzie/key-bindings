@@ -45,17 +45,17 @@ See examples.html for some basic usage
 include inside any entity like this:
 
 ```
-<a-entity key-bindings="bindings: {key1}={event1},{key2}={event2}" </a-entity>
+<a-entity key-bindings="bindings: {key1}={effect1},{key2}={effect2}" </a-entity>
 ```
 
 or via a mixin
 
 ```
-<a-mixin id="mymixin" key-bindings="bindings: {key1}={event1},{key2}={event2}" </a-mixin>
+<a-mixin id="mymixin" key-bindings="bindings: {key1}={effect1},{key2}={effect2}" </a-mixin>
 <a-entity mixin="mymixin" </a-entity>
 ```
 
-
+#### Key values
 
 {key1} values can be in one of two forms:
 
@@ -71,9 +71,15 @@ For events on other objects: they should be of the form {Entity ID}.{event} wher
 
   
 
-{event1} values should be the names of the events to be triggered.  Again, these are case-sensitive.
+#### Effect values
 
-You can also set "bindings: none" to explicitly set no bindings (or clear previously configured bindings).
+{effect1} values can trigger events or state transitions.  Again, these are case-sensitive.
+
+Options are:
+
+- The name of an event to be triggered
+- The name of a state to be set.  Use a string beginning with $ followed by the state name.
+- The name of a state to be cleared.  Use a string beginning with % followed by the state name.
 
 
 
@@ -83,7 +89,20 @@ For non-keypress events, there is no equivalent of "keydown", so states set will
 
 
 
-Note that when a key is held down, this will typically cause the keyDown event to fire multiple times, meaning that multiple events will be emitted.  The fact that a keypress is a repeat is encoded in the event object, so these could be filtered out in the downstream application if desired.  See: https://stackoverflow.com/questions/7686197/how-can-i-avoid-autorepeated-keydown-events-in-javascript
+#### Other options
+
+You can also set "bindings: none" to explicitly set no bindings (or clear previously configured bindings).
+
+
+
+### Repeated Key presses
+
+When a key is held down, this will typically cause the keyDown event to fire multiple times.
+
+These are handled as follows:
+
+- For events, multiple events are emitted, one for each keypress.  The fact that a keypress is a repeat is encoded in the event object (event.repeat boolean), so these could be filtered out in the downstream application if desired.  See: https://stackoverflow.com/questions/7686197/how-can-i-avoid-autorepeated-keydown-events-in-javascript
+- For states, the state transition only occurs on a first keypress, never on a repeat keypress.  Why this matters is that if a key is already pressed down before an object is created, the keypress won't cause a state transition on that object until the key is explicitly pressed *after* object creation
 
 
 

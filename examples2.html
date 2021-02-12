@@ -7,27 +7,51 @@
     <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
     <script src="key-bindings.js"></script>
     <script>
-    /* Very simple logger component that listens for an event and updates
-     * text when the event is detected */
-    AFRAME.registerComponent('logger', {
-      schema: {
-        event: {type: 'string', default: "event"}
-      },
+    /* Very simple logger component that listens for an events / states
+      and updates text when the event is detected or state is set.  */
+     AFRAME.registerComponent('logger', {
+       schema: {
+         event: {type: 'string', default: "event"},
+         state: {type: 'string', default: ""}
+       },
 
-      update: function () {
+       init: function () {
+         // Store off the default text (to present when state is not set)
+         if (this.data.state) {
+           this.stateClearText = this.el.getAttribute('text').value;
+         }
+       },
 
-      var el = this.el;
-      var data = this.data;
+       update: function () {
 
-      if (this.data.event) {
-          // This will log the event name when the entity emits the specified event.
-            el.addEventListener(data.event, function () {
-            el.setAttribute('text', "value: " + data.event);
-          });
-        }
-      }
-    });
+       var el = this.el;
+       var data = this.data;
 
+       if (this.data.event) {
+           // This will log the event name when the entity emits the specified event.
+             el.addEventListener(data.event, function () {
+             el.setAttribute('text', "value: " + data.event);
+             this.stateClearText = data.event;
+           });
+         }
+       },
+
+       tick: function() {
+         var el = this.el;
+         var data = this.data;
+
+         if (this.data.state) {
+           if (el.is(this.data.state)) {
+               // This will log the state name when the state is set.
+             el.setAttribute('text', "value: " + data.state);
+           }
+           else
+           {
+             el.setAttribute('text', "value: " + this.stateClearText);
+           }
+         }
+       }
+     });
     </script>
   </head>
   <body>
@@ -52,6 +76,14 @@
 
       <a-text id = 'Entity3' value="Press B" logger="event: OK" key-bindings="bindings:KeyB=OK" position="-2 1.5 -3" color="black"></a-text>
       <a-text id = 'Entity4' value="Press B" logger="event: Also OK" key-bindings="bindings:#Entity3.OK=Also OK" position="-2 1 -3" color="black"></a-text>
+
+      <!--With states rather than events.-->
+      <!--A triggers event setState, which sets state on C.
+          B triggers event clearState, which clears state on C.-->
+
+      <a-text id = 'Entity5' value="Press C" logger="event: Set State" key-bindings="debug: true; bindings:KeyC=Set State" position="0 2.5 -3" color="black"></a-text>
+      <a-text id = 'Entity6' value="Press D" logger="event: Clear State" key-bindings="debug: true; bindings:KeyD=Clear State" position="0 2 -3" color="black"></a-text>
+      <a-text id = 'Entity7' value="State Clear" logger="state: State Set" key-bindings="debug: true; bindings:#Entity5.Set State=$State Set,#Entity6.Clear State=%State Set" position="0 1.5 -3" color="black"></a-text>
 
     </a-scene>
   </body>
