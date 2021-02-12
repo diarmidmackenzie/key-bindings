@@ -216,7 +216,7 @@ AFRAME.registerComponent('key-bindings', {
       /* States are indicated by an initial character of $ */
       if (boundTo[0] == '$') {
         // state - how we handle this depends on whether the key is up or down.
-        if (keyDown) {
+        if (keyDown) {          
           this.el.addState(boundTo.substring(1));
         }
         else
@@ -225,9 +225,9 @@ AFRAME.registerComponent('key-bindings', {
           this.el.removeState(boundTo.substring(1));
         }
       }
-      else
+      else if (keyDown)
       {
-        // event
+        // event - only emitted on keyDown.
         /* Construct and emit event.
          * The name is as per the config.
          * We also embed the full event as received, as
